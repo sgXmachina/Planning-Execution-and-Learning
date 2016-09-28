@@ -16,7 +16,7 @@ board_state::board_state(std::vector<spaceship> spaceships)
 		//Construct the grid world
 		for (auto &ship: spaceships_)
 		{
-			if (ship.type == spaceship_type::leader)
+			if (ship.type == spaceship_type::red)
 			{
 				grid_[ship.x_coord][ship.y_coord] = 2;
 			}
@@ -28,15 +28,20 @@ board_state::board_state(std::vector<spaceship> spaceships)
 		}
 	}
 
-void board_state::manipulate_ship(unsigned int ship_number, direction &dir)
+board_state board_state::manipulate_ship(spaceship_type ship_type, direction &dir)
 {	
-	auto &ship = spaceships_[ship_number];
+	//Create a copy of the number of ship to be manipulated
+	auto &ship = spaceships_[ship_type];
+
+	//Store this move
+	move = std::make_pair(ship_type,dir);
 
 	//Spaceship leaves its current spot to move to this new position
 	grid_[ship.x_coord][ship.y_coord]=0;
 
 	if (dir == left || dir ==right)
 	{
+		//Move until you reach the end of the grid or hit some other obstacle
 		while (ship.x_coord < grid_x && ship.x_coord >=0 &&
 			grid_[ship.x_coord][ship.y_coord]==0)
 		{
@@ -64,7 +69,7 @@ void board_state::manipulate_ship(unsigned int ship_number, direction &dir)
 
 bool board_state::check_goal_reached()
 {
-	if (grid_[goal_x][goal_y] == spaceship_type::leader)
+	if (grid_[goal_x][goal_y] == spaceship_type::red)
 	{
 		return true;
 	}
