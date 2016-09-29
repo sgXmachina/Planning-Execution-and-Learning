@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <memory>
+#include <algorithm>
 
 namespace lunar_lockout
 {
@@ -32,12 +33,12 @@ enum direction
 enum spaceship_type
 {	
 	invalid = -1,
-	red =0,
-	green =1,
-	yellow =2,
-	purple =3,
-	orange =4,
-	blue = 5
+	red =2,
+	green =3,
+	yellow =4,
+	purple =5,
+	orange =6,
+	blue = 7
 	
 };
 
@@ -55,13 +56,28 @@ class board_state
 public: 
 
 	//Initialize the grid based on the tpyes of spaceships and their positions
-	board_state(std::vector<spaceship> spaceships);
+	board_state(const std::vector<spaceship>& spaceships);
 
 	//Manipulate the ship based on the current state of the board
-	board_state manipulate_ship(spaceship_type ship_type, direction &dir);
+	board_state manipulate_ship(const spaceship_type ship_type, const direction &dir);
 
 	//Check if we have reached the goal state
 	bool check_goal_reached();
+
+	//Check if the row/column contains another spaceship to hit
+	// bool check_valid_move(unsigned int x_coord, unsigned int y_coord, direction dir);
+
+	//Get the valid flag
+	bool get_valid();	
+
+	//Set the valid flag of the state
+	void set_valid(bool value);
+
+	//Set X,Y of the grid
+	void set_xy(const unsigned int x,const unsigned int y, const int value);
+
+	//Get X,Y of the grid
+	int get_xy(const unsigned int x,const unsigned int y);
 
 private:
 
@@ -72,10 +88,13 @@ private:
 		std::vector<spaceship> spaceships_;
 
 		//Pointer to parent of this state
-		std::shared_ptr<board_state> parent;
+		std::shared_ptr<board_state> parent_;
 
 		//Move chosen at this point
-		std::pair<spaceship_type,direction> move;
+		std::pair<spaceship_type,direction> move_;
+
+		//Flag which notes if this state is a valid
+		bool valid_ = true;
 
 };
 

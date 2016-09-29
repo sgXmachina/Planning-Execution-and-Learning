@@ -8,7 +8,7 @@
 
 namespace lunar_lockout
 {
-board_state::board_state(std::vector<spaceship> spaceships)
+board_state::board_state(const std::vector<spaceship>& spaceships)
 	{	
 		//Create a copy of the spaceships 
 		spaceships_ = spaceships;
@@ -28,43 +28,73 @@ board_state::board_state(std::vector<spaceship> spaceships)
 		}
 	}
 
-board_state board_state::manipulate_ship(spaceship_type ship_type, direction &dir)
+board_state board_state::manipulate_ship(const spaceship_type ship_type, const direction &dir)
 {	
+
+	// Create a new vector of spaceships to intialize a new board state
+	std::vector<spaceship> new_spaceships(spaceships_);
+
 	//Create a copy of the number of ship to be manipulated
-	auto &ship = spaceships_[ship_type];
+	auto ship = std::find_if(new_spaceships.begin(),new_spaceships.end(),
+							[&ship_type](const spaceship ship) 
+							{
+								return ship.type == ship_type;
+							});
+
+	//Create a new baord state with the existing pieces
+	board_state new_board_state(new_spaceships);
 
 	//Store this move
-	move = std::make_pair(ship_type,dir);
+	move_ = std::make_pair(ship_type,dir);
+
+	//Steps moved by this manipulation
+	unsigned int steps = 0;
 
 	//Spaceship leaves its current spot to move to this new position
-	grid_[ship.x_coord][ship.y_coord]=0;
+	new_board_state.set_xy(ship->x_coord,ship->y_coord,0);
 
 	if (dir == left || dir ==right)
 	{
 		//Move until you reach the end of the grid or hit some other obstacle
-		while (ship.x_coord < grid_x && ship.x_coord >=0 &&
-			grid_[ship.x_coord][ship.y_coord]==0)
+		while (ship->x_coord < grid_x-1 && ship->x_coord >0 &&	
+			new_board_state.get_xy(ship->x_coord,ship->y_coord)==0)
 		{
-			ship.x_coord+= dir;
+			ship->x_coord+= dir;
+			++steps;
 		}
-	//Since the above loop ends at a collision, move back one step
-	ship.x_coord-=dir;
+		
+		//if the ship did not find some other ship to collide against, this move is invalid
+		if(ship->x_coord == grid_x-1 || ship->x_coord ==0 ||steps==1)
+		{
+			new_board_state.set_valid(false);
+		}
+
+		//Move back one step because of the collision
+		ship->x_coord-=dir;
 	}
 
 	if (dir == up || dir ==down)
 	{
-		while (ship.y_coord < grid_y && ship.y_coord >=0 &&
-			grid_[ship.x_coord][ship.y_coord]==0)
+		while (ship->y_coord < grid_y-1 && ship->y_coord >0 &&
+			new_board_state.get_xy(ship->x_coord,ship->y_coord)==0)
 		{
-			ship.y_coord+= dir;
+			ship->y_coord+= dir;
+			++steps;
 		}
 
-	//Again, move back
-	ship.y_coord-=dir;
+		//if the ship did not find some other ship to collide against, this move is invalid
+		if(ship->y_coord == grid_y-1 || ship->y_coord ==0 ||steps==1)
+		{
+			new_board_state.set_valid(false);
+		}
+
+		//Move back one step because of the collision
+		ship->y_coord-=dir;
 	}
 
-	//Update the new position of the spaceship in the grid
-	grid_[ship.x_coord][ship.y_coord]=ship.type;
+	//Set the grid position in the new grid of the spaceship manipulated
+	new_board_state.set_xy(ship->x_coord,ship->y_coord,ship->type);
+
 }
 
 bool board_state::check_goal_reached()
@@ -78,6 +108,33 @@ bool board_state::check_goal_reached()
 	{
 		return false;
 	}
+}
+
+//Check if the row/column contains another spaceship to hit
+// bool board_state::check_valid_move(unsigned int x_coord, unsigned int y_coord, direction dir)
+
+// {
+
+// }
+
+bool board_state::get_valid()
+{
+	return valid_;
+}
+
+void board_state::set_valid(bool value)
+{
+	valid_=value;
+}
+
+void board_state::set_xy(const unsigned int x, const unsigned int y, const int value)
+{
+	grid_[x][y] = value;
+}
+
+int board_state::get_xy(const unsigned int x, const unsigned int y)
+{
+	return grid_[x][y];
 }
 
 }// end namespace lunar lockout
