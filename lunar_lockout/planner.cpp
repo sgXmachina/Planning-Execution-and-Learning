@@ -1,62 +1,111 @@
 // A state space planner for the lunar lockout world
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <memory>
 #include "state.h"
 
 
 int main(int argc,char** argv)
 {
-	std::cout<<"Got the header";
+	std::cout<<"Starting the game....\n";
 	std::vector<lunar_lockout::spaceship> spaceships;
 
-	lunar_lockout::board_state initial_state(spaceships);
+	lunar_lockout::spaceship red_ship={lunar_lockout::spaceship_type::red,2,0};
+	lunar_lockout::spaceship green_ship={lunar_lockout::spaceship_type::green,2,2};
+	lunar_lockout::spaceship yellow_ship={lunar_lockout::spaceship_type::yellow,3,4};
+	lunar_lockout::spaceship orange_ship={lunar_lockout::spaceship_type::orange,4,0};
+	lunar_lockout::spaceship purple_ship={lunar_lockout::spaceship_type::purple,1,3};
+
+	spaceships.push_back(red_ship);
+	spaceships.push_back(green_ship);
+	spaceships.push_back(yellow_ship);
+	spaceships.push_back(purple_ship);
+	spaceships.push_back(orange_ship);
+
+	
+	std::vector<lunar_lockout::spaceship_type> possible_ships;
+	possible_ships.push_back(lunar_lockout::spaceship_type::red);
+	possible_ships.push_back(lunar_lockout::spaceship_type::green);
+	possible_ships.push_back(lunar_lockout::spaceship_type::yellow);
+	possible_ships.push_back(lunar_lockout::spaceship_type::purple);
+	possible_ships.push_back(lunar_lockout::spaceship_type::orange);
+
 	std::shared_ptr<lunar_lockout::board_state> final_state;
 
 	bool goal_reached=false;
 
-	std::queue<lunar_lockout::board_state> states;
-	states.push(initial_state);
+	std::queue<std::shared_ptr<lunar_lockout::board_state>> states;
 
-	std::vector<lunar_lockout::board_state> states_stack;
+	std::shared_ptr<lunar_lockout::board_state> initial_state_ptr(new lunar_lockout::board_state(spaceships));
+	states.push(initial_state_ptr);
+
+	// std::vector<lunar_lockout::board_state> states_stack;space
 	
-	std::vector<lunar_lockout::spaceship_type> possible_ships;
-	possible_ships.push_back(lunar_lockout::spaceship_type::red);
 	std::vector<lunar_lockout::direction> possible_directions;
+	possible_directions.push_back(lunar_lockout::direction::up);
+	possible_directions.push_back(lunar_lockout::direction::down);
+	possible_directions.push_back(lunar_lockout::direction::left);
+	possible_directions.push_back(lunar_lockout::direction::right);
+
+	std::cout<<"=======Initial Grid======== ";
+	initial_state_ptr->print_grid();
 
 	//Search the state space iteratively using a Breadth First Search till the goal is reached
 	while (!goal_reached && !states.empty())
 	{	
 		//Get the next element in line and pop it from the list;
-		lunar_lockout::board_state& current_state = states.front();
+
+		std::cout<<"\n++++++++++++++++Changed my current pointer++++++++++++\n";
+		std::shared_ptr<lunar_lockout::board_state> current_state_ptr = states.front();
 		states.pop();
+		
+		// current_state.print_grid();
 
-		for (auto ship:possible_ships)
+		if (current_state_ptr->get_valid())
 		{
-
-			for(auto move:possible_directions)
-			{	
+			for (const auto& ship:possible_ships)
+			{
+				std::cout<<"\n=========PARENT======\n";
+				current_state_ptr->print_grid();
+				std::cout<<"========\n";
+				for(const auto& move:possible_directions)
+				{	
+					std::cout<<"Ship:                 "<<ship<<" "<<"Dir:                "<<move<<std::endl;
 				//Create a new state after manipulating the grid
-				lunar_lockout::board_state new_state = current_state.manipulate_ship(ship,move);
+					std::shared_ptr<lunar_lockout::board_state> new_state_ptr(new lunar_lockout::board_state(current_state_ptr->spaceships_));
+					std::cout<<"\n========CHILD========\n";
+					// new_state_ptr->print_grid();
+					new_state_ptr->set_parent(current_state_ptr);
+					new_state_ptr->manipulate_ship(ship,move);
+
+				// std::shared_ptr<lunar_lockout::board_state> new_state(std::make_shared<lunar_lockout::board_state>(current_state->manipulate_ship(ship,move)));
 
 				//Check if this is the goal state
-				if (new_state.check_goal_reached())
-				{	
-					final_state = std::make_shared<lunar_lockout::board_state>(new_state);
-					break;
-				}
+					if (new_state_ptr->check_goal_reached())
+					{	
+					// final_state = std::make_shared<lunar_lockout::board_state>(new_state);
+						final_state =new_state_ptr;
+						break;
+					}
 
 				//Only add this state to the queue if it is valid
-				if(new_state.get_valid())
-				{
-					states.push(new_state);
+					if(new_state_ptr->get_valid())
+					{
+						states.push(new_state_ptr);
+
+					}
+
 				}
 
 			}
-
 		}
+		
+
+		
 	}
 
+	std::cout<<"\n\nGot here";
 	if(final_state)
 	{
 		std::cout<<"Solution is found";
