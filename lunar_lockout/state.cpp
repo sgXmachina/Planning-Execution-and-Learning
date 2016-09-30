@@ -17,16 +17,6 @@ namespace lunar_lockout
 		//Construct the grid world
 		for (auto &ship: spaceships_)
 		{
-			// if (ship.type == spaceship_type::red)
-			// {
-			// 	grid_[ship.x_coord][ship.y_coord] = 2;
-			// }
-
-			// else
-			// {
-			// 	grid_[ship.x_coord][ship.y_coord] = 1;	
-			// }
-
 			grid_[ship.x_coord][ship.y_coord] = ship.type;
 		}
 	}
@@ -69,7 +59,7 @@ namespace lunar_lockout
 			int dirn = dir < 0 ? -1 : 1;
 
 		//Move until you reach the end of the grid or hit some other obstacle
-			while (ship->x_coord < grid_x && ship->x_coord >0 &&	
+			while (ship->x_coord < grid_x && ship->x_coord >=0 &&	
 				this->get_xy(ship->x_coord,ship->y_coord)==0)
 			{	
 				std::cout<<" Left Ship x: "<<ship->x_coord;
@@ -78,13 +68,12 @@ namespace lunar_lockout
 			}
 
 		//if the ship did not find some other ship to collide against, this move is invalid
-			if((ship->x_coord == grid_x || ship->x_coord ==0 && this->get_xy(ship->x_coord,ship->y_coord)==0)||steps==1)
+			if((ship->x_coord == grid_x || ship->x_coord ==-1)||steps==1)
 			{	
 				std::cout<<"Setting false ";
 				std::cout<<ship->x_coord;
 				this->set_valid(false);
 				this->set_xy(orig_x,orig_y,ship->type);
-				ship->x_coord-= (steps*dirn); 
 			}
 
 		//Move back one step because of the collision
@@ -102,7 +91,7 @@ namespace lunar_lockout
 		{	
 			int dirn = dir < 0 ? -1 : 1;
 
-			while (ship->y_coord < grid_y && ship->y_coord >0 &&
+			while (ship->y_coord < grid_y && ship->y_coord >=0 &&
 				this->get_xy(ship->x_coord,ship->y_coord)==0)
 			{	
 				std::cout<<" Left Ship y: "<<ship->y_coord;
@@ -111,7 +100,7 @@ namespace lunar_lockout
 			}
 
 		//if the ship did not find some other ship to collide against, this move is invalid
-			if((ship->y_coord == grid_x || ship->y_coord ==0 && this->get_xy(ship->x_coord,ship->y_coord)==0)||steps==1)
+			if((ship->y_coord == grid_y || ship->y_coord ==-1 )||steps==1)
 			{	
 				std::cout<<"Setting false";
 				std::cout<<ship->y_coord;

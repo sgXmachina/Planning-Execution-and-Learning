@@ -5,6 +5,23 @@
 #include <memory>
 #include "state.h"
 
+bool equal(const std::shared_ptr<lunar_lockout::board_state>& state1, const std::shared_ptr<lunar_lockout::board_state>& state2)
+{
+	bool equal =true;
+
+	for( size_t x=0;x<lunar_lockout::grid_x;++x)
+	{
+		for( size_t y=0;y<lunar_lockout::grid_y;++y)
+		{
+			if(state1->get_xy(x,y)!=state2->get_xy(x,y))
+			{
+				equal=false;
+			}
+		}
+	}
+	return equal;
+
+}
 
 int main(int argc,char** argv)
 {
@@ -35,7 +52,8 @@ int main(int argc,char** argv)
 
 	bool goal_reached=false;
 
-	std::queue<std::shared_ptr<lunar_lockout::board_state>> states;
+	std::stack<std::shared_ptr<lunar_lockout::board_state>> states;
+	std::vector<std::shared_ptr<lunar_lockout::board_state>> visited_states;
 
 	std::shared_ptr<lunar_lockout::board_state> initial_state_ptr(new lunar_lockout::board_state(spaceships));
 	states.push(initial_state_ptr);
@@ -47,6 +65,8 @@ int main(int argc,char** argv)
 	possible_directions.push_back(lunar_lockout::direction::down);
 	possible_directions.push_back(lunar_lockout::direction::left);
 	possible_directions.push_back(lunar_lockout::direction::right);
+	
+	// std::cout.setstate(std::ios_base::failbit);
 
 	std::cout<<"=======Initial Grid======== ";
 	initial_state_ptr->print_grid();
@@ -57,45 +77,67 @@ int main(int argc,char** argv)
 		//Get the next element in line and pop it from the list;
 
 		std::cout<<"\n++++++++++++++++Changed my current pointer++++++++++++\n";
-		std::shared_ptr<lunar_lockout::board_state> current_state_ptr = states.front();
+		std::shared_ptr<lunar_lockout::board_state> current_state_ptr = states.top();
+		visited_states.push_back(current_state_ptr);
 		states.pop();
+		std::cout<<"\n$$$$$$$$$States Remaining: "<<states.size();
 		
 		// current_state.print_grid();
 
-		if (current_state_ptr->get_valid())
+		if (current_state_ptr->get_valid() && !final_state)
 		{
 			for (const auto& ship:possible_ships)
 			{
 				std::cout<<"\n=========PARENT======\n";
 				current_state_ptr->print_grid();
 				std::cout<<"========\n";
-				for(const auto& move:possible_directions)
-				{	
-					std::cout<<"Ship:                 "<<ship<<" "<<"Dir:                "<<move<<std::endl;
+				if(!final_state)
+				{
+					for(const auto& move:possible_directions)
+					{	
+						std::cout<<"Ship:                 "<<ship<<" "<<"Dir:                "<<move<<std::endl;
 				//Create a new state after manipulating the grid
-					std::shared_ptr<lunar_lockout::board_state> new_state_ptr(new lunar_lockout::board_state(current_state_ptr->spaceships_));
-					std::cout<<"\n========CHILD========\n";
+						std::shared_ptr<lunar_lockout::board_state> new_state_ptr(new lunar_lockout::board_state(current_state_ptr->spaceships_));
+						
+					
+
+
+
+						std::cout<<"\n========CHILD========\n";
 					// new_state_ptr->print_grid();
-					new_state_ptr->set_parent(current_state_ptr);
-					new_state_ptr->manipulate_ship(ship,move);
+						new_state_ptr->set_parent(current_state_ptr);
+						new_state_ptr->manipulate_ship(ship,move);
+
+						for (auto& state:visited_states)
+						{
+							if(equal(state,new_state_ptr))
+							{
+								new_state_ptr->set_valid(false);
+								std::cout<<"......REPEATED GRID......\nSize of Visited = "<<visited_states.size()<<std::endl;
+								new_state_ptr->print_grid();
+
+								break;
+							}
+						}
 
 				// std::shared_ptr<lunar_lockout::board_state> new_state(std::make_shared<lunar_lockout::board_state>(current_state->manipulate_ship(ship,move)));
 
 				//Check if this is the goal state
-					if (new_state_ptr->check_goal_reached())
-					{	
+						if (new_state_ptr->check_goal_reached())
+						{	
 					// final_state = std::make_shared<lunar_lockout::board_state>(new_state);
-						final_state =new_state_ptr;
-						break;
-					}
+							final_state =new_state_ptr;
+							break;
+						}
 
 				//Only add this state to the queue if it is valid
-					if(new_state_ptr->get_valid())
-					{
-						states.push(new_state_ptr);
+						if(new_state_ptr->get_valid())
+						{
+							states.push(new_state_ptr);
+
+						}
 
 					}
-
 				}
 
 			}
@@ -105,7 +147,7 @@ int main(int argc,char** argv)
 		
 	}
 
-	std::cout<<"\n\nGot here";
+	std::cout<<"\n\nGot here\n";
 	if(final_state)
 	{
 		std::cout<<"Solution is found";
