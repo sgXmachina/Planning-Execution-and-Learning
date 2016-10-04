@@ -2,26 +2,32 @@
 ///// Author: Shivam Gautam
 ///// 		  MRSD, CMU
 
-#include "state.h"
+#include "state_cell.h"
 #include <iostream>
 
 //Implementation for the state class of the lunar lockout world
 
-namespace lunar_lockout
+namespace lunar_lockout_cell
 {
-	board_state::board_state(const std::vector<spaceship> spaceships)
+	board_cell_state::board_cell_state(grid_type grid)
 	{	
-		//Create a copy of the spaceships 
-		spaceships_ = spaceships;
+		//Create a copy of the grid
+		grid_ = grid;
 
 		//Construct the grid world
-		for (auto &ship: spaceships_)
+		for( size_t x=0;x<grid_x;++x)
 		{
-			grid_[ship.x_coord][ship.y_coord] = ship.type;
+			for( size_t y=0;y<grid_y;++y)
+			{
+				if(grid_[x][y]!=0)
+				{
+					spaceships_.push_back(spaceship(static_cast<spaceship_type>(grid_[x][y]),x,y));
+				}
+			}
 		}
 	}
 
-	void board_state::manipulate_ship(const spaceship_type ship_type, const direction dir)
+	void board_cell_state::manipulate_grid(const grid_coord coord, const direction dir)
 	{	
 
 	// Create a new vector of spaceships to intialize a new board state
@@ -29,19 +35,14 @@ namespace lunar_lockout
 
 	//Create a copy of the number of ship to be manipulated
 		auto ship = std::find_if(spaceships_.begin(),spaceships_.end(),
-			[&ship_type](const spaceship t_ship) 
+			[&coord](const spaceship t_ship) 
 			{	
-				return t_ship.type == ship_type;
+				return (t_ship.x_coord == coord.x_coord && t_ship.y_coord == coord.y_coord);
 			});
-	// std::cout<<"\nFound ship is color "<<ship->type<<" "<<std::endl;
-	//Create a new baord state with the existing pieces
-	// board_state new_board_state(new_spaceships);
-	// std::cout<<"X: "<<ship->x_coord<<" Y: "<<ship->y_coord<<std::endl;;
-
 
 
 	//Store this move
-	// move_ = std::make_pair(ship_type,dir);
+	this->move_ = std::make_pair(ship->type,dir);
 
 	//Steps moved by this manipulation
 		unsigned int steps = 0;
@@ -52,7 +53,7 @@ namespace lunar_lockout
 		this->set_xy(ship->x_coord,ship->y_coord,0);
 		unsigned int orig_x=ship->x_coord;
 		unsigned int orig_y=ship->y_coord;
-	// new_board_state.set_parent(*this);
+	// new_board_cell_state.set_parent(*this);
 
 		if (dir == left || dir == right)
 		{	
@@ -122,7 +123,7 @@ namespace lunar_lockout
 		std::cout<<"Setting xy to "<<ship->type;
 
 
-	// new_board_state.print_grid();
+	// new_board_cell_state.print_grid();
 		std::cout<<" This grid is "<<this->get_valid()<<std::endl;
 		if(this->get_valid())
 		{	
@@ -130,11 +131,11 @@ namespace lunar_lockout
 			this->print_grid();
 		}
 
-	// return new_board_state;
+	// return new_board_cell_state;
 
 	}
 
-	bool board_state::check_goal_reached()
+	bool board_cell_state::check_goal_reached()
 	{
 		if (grid_[goal_x][goal_y] == spaceship_type::red)
 		{
@@ -148,34 +149,34 @@ namespace lunar_lockout
 	}
 
 //Check if the row/column contains another spaceship to hit
-// bool board_state::check_valid_move(unsigned int x_coord, unsigned int y_coord, direction dir)
+// bool board_cell_state::check_valid_move(unsigned int x_coord, unsigned int y_coord, direction dir)
 
 // {
 
 // }
 
-	bool board_state::get_valid()
+	bool board_cell_state::get_valid()
 	{
 		return valid_;
 	}
 
-	void board_state::set_valid(bool value)
+	void board_cell_state::set_valid(bool value)
 	{
 		valid_=value;
 	}
 
-	void board_state::set_xy(const unsigned int x, const unsigned int y, const unsigned int value)
+	void board_cell_state::set_xy(const unsigned int x, const unsigned int y, const unsigned int value)
 	{	
 		std::cout<<"Setting x: "<<x<<" y: "<<y<<" to "<<value;
 		grid_[x][y] = value;
 	}
 
-	int board_state::get_xy(const unsigned int x, const unsigned int y)
+	int board_cell_state::get_xy(const unsigned int x, const unsigned int y)
 	{
 		return grid_[x][y];
 	}
 
-	void board_state::print_grid()
+	void board_cell_state::print_grid()
 	{	
 		for (unsigned int i=0;i<5;++i)
 		{
@@ -189,9 +190,15 @@ namespace lunar_lockout
 
 
 //Set the parent of the current state
-	void board_state::set_parent(std::shared_ptr<board_state>& parent_state)
+	void board_cell_state::set_parent(std::shared_ptr<board_cell_state>& parent_state)
 	{
 		parent_ = parent_state;
 	}
 
+
+	//Return the current grid state
+	grid_type board_cell_state::get_grid()
+	{
+		return grid_;
+	}
 }// end namespace lunar lockout

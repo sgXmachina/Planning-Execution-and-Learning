@@ -1,6 +1,8 @@
 ///// Initialization of the state representation of the lunar lockout game/////
 ///// Author: Shivam Gautam
 ///// 		  MRSD, CMU
+#ifndef STATE_CELL
+#define STATE_CELL
 
 #include <vector>
 #include <array>
@@ -8,7 +10,7 @@
 #include <algorithm>
 #include <iostream>
 
-namespace lunar_lockout
+namespace lunar_lockout_cell
 {
 namespace
 {
@@ -20,10 +22,12 @@ const unsigned int goal_y =2;
 //Grid size for the lunar lockout problem. Typically 5x5
 const size_t grid_x = 5;
 const size_t grid_y = 5;
+
+typedef std::array<std::array<unsigned int,5>,5> grid_type;
 }
 enum direction
 {	
-	up = 1,
+	up = 1, //Translate up the grid
 	down = -2,
 	left = -3,
 	right = 4,
@@ -38,9 +42,22 @@ enum spaceship_type
 	green =3,
 	yellow =4,
 	purple =5,
-	orange =6
+	orange =6,
+	blue=7
 	
 	
+};
+
+struct grid_coord
+{
+	unsigned int x_coord = 0;
+	unsigned int y_coord = 0;
+
+	grid_coord(unsigned int x_val, unsigned int y_val)
+	{
+		x_coord=x_val;
+		y_coord=y_val;
+	}
 };
 
 struct spaceship
@@ -59,15 +76,15 @@ struct spaceship
 
 
 
-class board_state
+class board_cell_state
 {
 public: 
 
 	//Initialize the grid based on the tpyes of spaceships and their positions
-	board_state(const std::vector<spaceship> spaceships);
+	board_cell_state(grid_type grid);
 
-	//Manipulate the ship based on the current state of the board
-	void manipulate_ship(const spaceship_type ship_type, const direction dir);
+	//Manipulate the grid coordinate based on the current state of the board, based on the set of actions
+	void manipulate_grid(const grid_coord coord, const direction dir);
 
 	//Check if we have reached the goal state
 	bool check_goal_reached();
@@ -91,23 +108,28 @@ public:
 	void print_grid();
 
 	//Set the parent of the current state
-	void set_parent(std::shared_ptr<board_state>& parent_state);
+	void set_parent(std::shared_ptr<board_cell_state>& parent_state);
 
 	//The spaceships in the grid
-		std::vector<spaceship> spaceships_;
+	std::vector<spaceship> spaceships_;
+
+	//Return the current grid state
+	grid_type get_grid();
+
 
 private:
 
 		//Initialize the grid to zero
 		// std::array<std::array<int, grid_y>, grid_x> grid_={{{0,0,0,0,0}}};
-		unsigned int grid_[5][5] = {{0}};
+		// unsigned int grid_[grid_x][grid_y] = {{0}};
+		grid_type  grid_;
 		
 
 		//Pointer to parent of this state
-		std::shared_ptr<board_state> parent_;
+		std::shared_ptr<board_cell_state> parent_;
 
 		//Move chosen at this point
-		// std::pair<spaceship_type,direction> move_;
+		std::pair<spaceship_type,direction> move_;
 
 		//Flag which notes if this state is a valid
 		bool valid_ = true;
@@ -115,3 +137,5 @@ private:
 };
 
 } // end namespace lunar lockout
+
+#endif
