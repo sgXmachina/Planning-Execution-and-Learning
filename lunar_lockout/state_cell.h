@@ -127,11 +127,7 @@ public:
 
 private:
 
-		//Initialize the grid to zero
-		// std::array<std::array<int, grid_y>, grid_x> grid_={{{0,0,0,0,0}}};
-		// unsigned int grid_[grid_x][grid_y] = {{0}};
 	grid_type  grid_;
-
 
 		//Pointer to parent of this state
 	std::shared_ptr<board_cell_state> parent_;

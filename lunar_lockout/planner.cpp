@@ -11,7 +11,7 @@
 int main(int argc,char** argv)
 {
 	std::cout<<"Starting the game....\n";
-	init_planning_spaceship_statespace();
-	// init_planning_cell_statespace();
+	// init_planning_spaceship_statespace();
+	init_planning_cell_statespace();
 
 }

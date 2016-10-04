@@ -20,7 +20,7 @@ namespace lunar_lockout_cell
 		}
 	}
 
-	
+
 	board_cell_state::board_cell_state(grid_type grid)
 	{	
 		//Create a copy of the grid
@@ -42,9 +42,6 @@ namespace lunar_lockout_cell
 	void board_cell_state::manipulate_grid(const grid_coord coord, const direction dir)
 	{	
 
-	// Create a new vector of spaceships to intialize a new board state
-	// std::vector<spaceship> new_spaceships(spaceships_);
-
 	//Create a copy of the number of ship to be manipulated
 		auto ship = std::find_if(spaceships_.begin(),spaceships_.end(),
 			[&coord](const spaceship t_ship) 
@@ -59,13 +56,11 @@ namespace lunar_lockout_cell
 	//Steps moved by this manipulation
 		unsigned int steps = 0;
 
-	// std::cout<<"X: "<<ship->x_coord<<" Y: "<<ship->y_coord<<std::endl;
 
 	//Spaceship leaves its current spot to move to this new position
 		this->set_xy(ship->x_coord,ship->y_coord,0);
 		unsigned int orig_x=ship->x_coord;
 		unsigned int orig_y=ship->y_coord;
-	// new_board_cell_state.set_parent(*this);
 
 		if (dir == left || dir == right)
 		{	
@@ -75,7 +70,6 @@ namespace lunar_lockout_cell
 			while (ship->x_coord < grid_x && ship->x_coord >=0 &&	
 				this->get_xy(ship->x_coord,ship->y_coord)==0)
 			{	
-				std::cout<<" Left Ship x: "<<ship->x_coord;
 				ship->x_coord+= (dirn);
 				++steps;
 			}
@@ -83,8 +77,6 @@ namespace lunar_lockout_cell
 		//if the ship did not find some other ship to collide against, this move is invalid
 			if((ship->x_coord == grid_x || ship->x_coord ==-1)||steps==1)
 			{	
-				std::cout<<"Setting false ";
-				std::cout<<ship->x_coord;
 				this->set_valid(false);
 				this->set_xy(orig_x,orig_y,ship->type);
 			}
@@ -92,8 +84,6 @@ namespace lunar_lockout_cell
 		//Move back one step because of the collision
 			else
 			{
-				std::cout<<"\n Not setting to false";
-
 				ship->x_coord-=(dirn);
 				this->set_xy(ship->x_coord,ship->y_coord,ship->type);
 
@@ -107,7 +97,6 @@ namespace lunar_lockout_cell
 			while (ship->y_coord < grid_y && ship->y_coord >=0 &&
 				this->get_xy(ship->x_coord,ship->y_coord)==0)
 			{	
-				std::cout<<" Left Ship y: "<<ship->y_coord;
 				ship->y_coord+= dirn;
 				++steps;
 			}
@@ -115,8 +104,6 @@ namespace lunar_lockout_cell
 		//if the ship did not find some other ship to collide against, this move is invalid
 			if((ship->y_coord == grid_y || ship->y_coord ==-1 )||steps==1)
 			{	
-				std::cout<<"Setting false";
-				std::cout<<ship->y_coord;
 				this->set_valid(false);
 				this->set_xy(orig_x,orig_y,ship->type);
 				ship->y_coord-= (steps*dirn);
@@ -124,27 +111,11 @@ namespace lunar_lockout_cell
 		//Move back one step because of the collision
 			else
 			{	
-				std::cout<<"\n Not setting to false";
 				ship->y_coord-=dirn;
 				this->set_xy(ship->x_coord,ship->y_coord,ship->type);
 
 			}
 		}
-
-	//Set the grid position in the new grid of the spaceship manipulated
-		std::cout<<"Setting xy to "<<ship->type;
-
-
-	// new_board_cell_state.print_grid();
-		std::cout<<" This grid is "<<this->get_valid()<<std::endl;
-		if(this->get_valid())
-		{	
-			std::cout<<"\n*******Valid Grid*********\n";
-			this->print_grid();
-		}
-
-	// return new_board_cell_state;
-
 	}
 
 	bool board_cell_state::check_goal_reached()
@@ -160,13 +131,6 @@ namespace lunar_lockout_cell
 		}
 	}
 
-//Check if the row/column contains another spaceship to hit
-// bool board_cell_state::check_valid_move(unsigned int x_coord, unsigned int y_coord, direction dir)
-
-// {
-
-// }
-
 	bool board_cell_state::get_valid()
 	{
 		return valid_;
@@ -179,7 +143,6 @@ namespace lunar_lockout_cell
 
 	void board_cell_state::set_xy(const unsigned int x, const unsigned int y, const unsigned int value)
 	{	
-		std::cout<<"Setting x: "<<x<<" y: "<<y<<" to "<<value;
 		grid_[x][y] = value;
 	}
 

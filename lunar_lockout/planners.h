@@ -110,7 +110,6 @@ void init_spaceship_statespace(std::vector<lunar_lockout_ship::spaceship>& space
 	possible_directions.push_back(lunar_lockout_ship::direction::left);
 	possible_directions.push_back(lunar_lockout_ship::direction::right);
 	
-	// std::cout.setstate(std::ios_base::failbit);
 
 
 }
@@ -145,7 +144,6 @@ void init_planning_spaceship_statespace()
 	std::vector<lunar_lockout_ship::spaceship_type> possible_ships;
 	std::vector<lunar_lockout_ship::direction> possible_directions;
 
-
 	init_spaceship_statespace(spaceships,possible_ships, possible_directions);
 	
 	std::stack<std::shared_ptr<lunar_lockout_ship::board_ship_state>> states;
@@ -156,39 +154,28 @@ void init_planning_spaceship_statespace()
 	std::shared_ptr<lunar_lockout_ship::board_ship_state> final_state;
 	bool goal_reached=false;
 
-	std::cout<<"=======Initial Grid======== ";
+	//Print the initial State
+	std::cout<<"Initial State of the grid is: \n";
 	initial_state_ptr->print_grid();
-
 	//Search the state space iteratively using a Breadth First Search till the goal is reached
 	while (!goal_reached && !states.empty())
 	{	
 		//Get the next element in line and pop it from the list;
-
-		std::cout<<"\n++++++++++++++++Changed my current pointer++++++++++++\n";
 		std::shared_ptr<lunar_lockout_ship::board_ship_state> current_state_ptr = states.top();
 		visited_states.push_back(current_state_ptr);
 		states.pop();
-		std::cout<<"\n$$$$$$$$$States Remaining: "<<states.size();
-		
-		// current_state.print_grid();
 
 		if (current_state_ptr->get_valid() && !final_state)
 		{
 			for (const auto& ship:possible_ships)
 			{
-				std::cout<<"\n=========PARENT======\n";
-				current_state_ptr->print_grid();
-				std::cout<<"========\n";
 				if(!final_state)
 				{
 					for(const auto& move:possible_directions)
 					{	
-						std::cout<<"Ship:                 "<<ship<<" "<<"Dir:                "<<move<<std::endl;
 				//Create a new state after manipulating the grid
 						std::shared_ptr<lunar_lockout_ship::board_ship_state> new_state_ptr(new lunar_lockout_ship::board_ship_state(current_state_ptr->spaceships_));
 						
-						std::cout<<"\n========CHILD========\n";
-					// new_state_ptr->print_grid();
 						new_state_ptr->set_parent(current_state_ptr);
 						new_state_ptr->manipulate_ship(ship,move);
 
@@ -197,14 +184,10 @@ void init_planning_spaceship_statespace()
 							if(equal_ship_states(state,new_state_ptr))
 							{
 								new_state_ptr->set_valid(false);
-								std::cout<<"......REPEATED GRID......\nSize of Visited = "<<visited_states.size()<<std::endl;
-								new_state_ptr->print_grid();
 
 								break;
 							}
 						}
-
-				// std::shared_ptr<lunar_lockout_ship::board_ship_state> new_state(std::make_shared<lunar_lockout_ship::board_ship_state>(current_state->manipulate_ship(ship,move)));
 
 				//Check if this is the goal state
 						if (new_state_ptr->check_goal_reached())
@@ -231,7 +214,6 @@ void init_planning_spaceship_statespace()
 		
 	}
 
-	std::cout<<"\n\nGot here\n";
 	if(final_state)
 	{
 		std::cout<<"Solution is found\n";
@@ -240,7 +222,7 @@ void init_planning_spaceship_statespace()
 
 	else
 	{
-		std::cout<<"Can't find the solution";
+		std::cout<<"Can't find the solution.";
 	}
 
 }
@@ -267,7 +249,8 @@ void init_planning_cell_statespace()
 	std::shared_ptr<lunar_lockout_cell::board_cell_state> final_state;
 	bool goal_reached=false;
 
-	std::cout<<"=======Initial Grid======== ";
+	//Print the initial State
+	std::cout<<"Initial State of the grid is: \n";
 	initial_state_ptr->print_grid();
 
 	//Search the state space iteratively using a Breadth First Search till the goal is reached
@@ -275,13 +258,9 @@ void init_planning_cell_statespace()
 	{	
 		//Get the next element in line and pop it from the list;
 
-		std::cout<<"\n++++++++++++++++Changed my current pointer++++++++++++\n";
 		std::shared_ptr<lunar_lockout_cell::board_cell_state> current_state_ptr = states.top();
 		visited_states.push_back(current_state_ptr);
 		states.pop();
-		std::cout<<"\n$$$$$$$$$States Remaining: "<<states.size();
-		
-		// current_state.print_grid();
 
 		if (current_state_ptr->get_valid() && !final_state)
 		{
@@ -292,18 +271,13 @@ void init_planning_cell_statespace()
 					
 					if(current_state_ptr->get_xy(x,y)!=0)
 					{
-						std::cout<<"\n=========PARENT======\n";
-						current_state_ptr->print_grid();
-						std::cout<<"========\n";
 						if(!final_state)
 						{
 							for(const auto& move:possible_directions)
 							{	
-								std::cout<<"Coord:                 "<<x<<","<<y<<" "<<"Dir:                "<<move<<std::endl;
 								//Create a new state after manipulating the grid
 								std::shared_ptr<lunar_lockout_cell::board_cell_state> new_state_ptr(new lunar_lockout_cell::board_cell_state(current_state_ptr->get_grid()));
 
-								std::cout<<"\n========CHILD========\n";
 								new_state_ptr->set_parent(current_state_ptr);
 								new_state_ptr->manipulate_grid(lunar_lockout_cell::grid_coord(x,y),move);
 
@@ -312,9 +286,6 @@ void init_planning_cell_statespace()
 									if(equal_cell_states(state,new_state_ptr))
 									{
 										new_state_ptr->set_valid(false);
-										std::cout<<"......REPEATED GRID......\nSize of Visited = "<<visited_states.size()<<std::endl;
-										new_state_ptr->print_grid();
-
 										break;
 									}
 								}
@@ -347,7 +318,7 @@ void init_planning_cell_statespace()
 
 	if(final_state)
 	{
-		std::cout<<"Solution is found\n";
+		std::cout<<"\nSolution is found\n";
 		print_solution<lunar_lockout_cell::board_cell_state>(final_state);
 	}
 
