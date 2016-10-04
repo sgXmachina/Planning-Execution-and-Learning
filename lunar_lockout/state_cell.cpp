@@ -8,7 +8,19 @@
 //Implementation for the state class of the lunar lockout world
 
 namespace lunar_lockout_cell
-{
+{	
+
+	//Convert direction to string
+	const char* get_direction_as_string(direction dir) {
+		switch (dir) {
+			case up: return "up";
+			case down: return "down";
+			case left: return "left";
+			case right: return "right";
+		}
+	}
+
+	
 	board_cell_state::board_cell_state(grid_type grid)
 	{	
 		//Create a copy of the grid
@@ -195,10 +207,23 @@ namespace lunar_lockout_cell
 		parent_ = parent_state;
 	}
 
+	//Get the parent
+	std::shared_ptr<board_cell_state> board_cell_state::get_parent()
+	{
+		return parent_;
+	}
 
 	//Return the current grid state
 	grid_type board_cell_state::get_grid()
 	{
 		return grid_;
 	}
+
+	//Print the move stored at this cell state
+	void board_cell_state::print_move()
+	{
+		std::cout<<"[Move] Ship Type:"<<move_.first<<" Direction: "<<get_direction_as_string(move_.second)<<std::endl;
+	}
+
+
 }// end namespace lunar lockout

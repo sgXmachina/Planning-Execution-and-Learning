@@ -12,28 +12,30 @@
 
 namespace lunar_lockout_cell
 {
-namespace
-{
+	namespace
+	{
 
 //Coordinates for the goal state
-const unsigned int goal_x =2;
-const unsigned int goal_y =2;
+		const unsigned int goal_x =2;
+		const unsigned int goal_y =2;
 
 //Grid size for the lunar lockout problem. Typically 5x5
-const size_t grid_x = 5;
-const size_t grid_y = 5;
+		const size_t grid_x = 5;
+		const size_t grid_y = 5;
 
-typedef std::array<std::array<unsigned int,5>,5> grid_type;
-}
-enum direction
-{	
-	up = 1, //Translate up the grid
-	down = -2,
+		typedef std::array<std::array<unsigned int,5>,5> grid_type;
+	}
+	enum direction
+	{	
+	down = 1, //Translate up the grid
+	up = -2,
 	left = -3,
 	right = 4,
 	none = 0
 
 };
+
+
 
 enum spaceship_type
 {	
@@ -110,11 +112,17 @@ public:
 	//Set the parent of the current state
 	void set_parent(std::shared_ptr<board_cell_state>& parent_state);
 
+	//Get the parent
+	std::shared_ptr<board_cell_state> get_parent();
+
 	//The spaceships in the grid
 	std::vector<spaceship> spaceships_;
 
 	//Return the current grid state
 	grid_type get_grid();
+
+	//Print the next valid move at this step
+	void print_move();
 
 
 private:
@@ -122,17 +130,17 @@ private:
 		//Initialize the grid to zero
 		// std::array<std::array<int, grid_y>, grid_x> grid_={{{0,0,0,0,0}}};
 		// unsigned int grid_[grid_x][grid_y] = {{0}};
-		grid_type  grid_;
-		
+	grid_type  grid_;
+
 
 		//Pointer to parent of this state
-		std::shared_ptr<board_cell_state> parent_;
+	std::shared_ptr<board_cell_state> parent_;
 
 		//Move chosen at this point
-		std::pair<spaceship_type,direction> move_;
+	std::pair<spaceship_type,direction> move_;
 
 		//Flag which notes if this state is a valid
-		bool valid_ = true;
+	bool valid_ = true;
 
 };
 

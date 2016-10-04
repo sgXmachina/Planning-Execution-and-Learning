@@ -9,6 +9,24 @@
 #include "state_ship.h"
 #include "state_cell.h"
 
+
+template<typename T>
+void print_solution(const std::shared_ptr<T>& final_node)
+{
+	
+	if(final_node->get_parent()==NULL)
+	{return;}
+	
+	print_solution<T>(final_node->get_parent());	
+		
+	final_node->print_move();
+	final_node->print_grid();
+	std::cout<<"\n";
+		
+	
+
+}
+
 bool equal_ship_states(const std::shared_ptr<lunar_lockout_ship::board_ship_state>& state1, const std::shared_ptr<lunar_lockout_ship::board_ship_state>& state2)
 {
 	bool equal =true;
@@ -216,7 +234,8 @@ void init_planning_spaceship_statespace()
 	std::cout<<"\n\nGot here\n";
 	if(final_state)
 	{
-		std::cout<<"Solution is found";
+		std::cout<<"Solution is found\n";
+		print_solution<lunar_lockout_ship::board_ship_state>(final_state);
 	}
 
 	else
@@ -281,7 +300,7 @@ void init_planning_cell_statespace()
 							for(const auto& move:possible_directions)
 							{	
 								std::cout<<"Coord:                 "<<x<<","<<y<<" "<<"Dir:                "<<move<<std::endl;
-				//Create a new state after manipulating the grid
+								//Create a new state after manipulating the grid
 								std::shared_ptr<lunar_lockout_cell::board_cell_state> new_state_ptr(new lunar_lockout_cell::board_cell_state(current_state_ptr->get_grid()));
 
 								std::cout<<"\n========CHILD========\n";
@@ -299,9 +318,6 @@ void init_planning_cell_statespace()
 										break;
 									}
 								}
-
-				// std::shared_ptr<lunar_lockout_cell::board_cell_state> new_state(std::make_shared<lunar_lockout_cell::board_cell_state>(current_state->manipulate_ship(ship,move)));
-
 				//Check if this is the goal state
 								if (new_state_ptr->check_goal_reached())
 								{	
@@ -329,10 +345,10 @@ void init_planning_cell_statespace()
 		
 	}
 
-	std::cout<<"\n\nGot here\n";
 	if(final_state)
 	{
-		std::cout<<"Solution is found";
+		std::cout<<"Solution is found\n";
+		print_solution<lunar_lockout_cell::board_cell_state>(final_state);
 	}
 
 	else

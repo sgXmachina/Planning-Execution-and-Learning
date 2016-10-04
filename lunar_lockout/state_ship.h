@@ -12,42 +12,40 @@
 
 namespace lunar_lockout_ship
 {
-namespace
-{
+	namespace
+	{
 
 //Coordinates for the goal state
-const unsigned int goal_x =2;
-const unsigned int goal_y =2;
+		const unsigned int goal_x =2;
+		const unsigned int goal_y =2;
 
 //Grid size for the lunar lockout problem. Typically 5x5
-const size_t grid_x = 5;
-const size_t grid_y = 5;
-}
-enum direction
-{	
-	up = 1,
-	down = -2,
-	left = -3,
-	right = 4,
-	none = 0
+		const size_t grid_x = 5;
+		const size_t grid_y = 5;
+	}
+	enum direction
+	{	
+		down = 1,
+		up = -2,
+		left = -3,
+		right = 4,
+		none = 0
 
-};
+	};
 
-enum spaceship_type
-{	
-	invalid = -1,
-	red =2,
-	green =3,
-	yellow =4,
-	purple =5,
-	orange =6,
-	blue=7
-	
-	
-};
+	enum spaceship_type
+	{	
+		invalid = -1,
+		red =2,
+		green =3,
+		yellow =4,
+		purple =5,
+		orange =6,
+		blue=7
+	};
 
-struct spaceship
-{
+	struct spaceship
+	{
 	spaceship_type type;// = spaceship_type::invalid;
 	unsigned int x_coord = 0;
 	unsigned int y_coord = 0;
@@ -75,9 +73,6 @@ public:
 	//Check if we have reached the goal state
 	bool check_goal_reached();
 
-	//Check if the row/column contains another spaceship to hit
-	// bool check_valid_move(unsigned int x_coord, unsigned int y_coord, direction dir);
-
 	//Get the valid flag
 	bool get_valid();	
 
@@ -96,24 +91,27 @@ public:
 	//Set the parent of the current state
 	void set_parent(std::shared_ptr<board_ship_state>& parent_state);
 
+	//Get the parent
+	std::shared_ptr<board_ship_state> get_parent();
+
+	//Print the next valid move at this step
+	void print_move();
+
 	//The spaceships in the grid
-		std::vector<spaceship> spaceships_;
+	std::vector<spaceship> spaceships_;
 
 private:
 
-		//Initialize the grid to zero
-		// std::array<std::array<int, grid_y>, grid_x> grid_={{{0,0,0,0,0}}};
-		unsigned int grid_[5][5] = {{0}};
-		
+	unsigned int grid_[5][5] = {{0}};
 
 		//Pointer to parent of this state
-		std::shared_ptr<board_ship_state> parent_;
+	std::shared_ptr<board_ship_state> parent_;
 
 		//Move chosen at this point
-		std::pair<spaceship_type,direction> move_;
+	std::pair<spaceship_type,direction> move_;
 
 		//Flag which notes if this state is a valid
-		bool valid_ = true;
+	bool valid_ = true;
 
 };
 
