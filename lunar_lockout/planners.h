@@ -74,17 +74,31 @@ void copy_grid(const unsigned int original_grid[][lunar_lockout_cell::grid_y],lu
 
 void init_spaceship_statespace(std::vector<lunar_lockout_ship::spaceship>& spaceships,
 	std::vector<lunar_lockout_ship::spaceship_type>& possible_ships,
-	std::vector<lunar_lockout_ship::direction>& possible_directions
+	std::vector<lunar_lockout_ship::direction>& possible_directions,
+	int puzzle_number
 	)
 {
 
+	lunar_lockout_ship::spaceship red_ship={lunar_lockout_ship::spaceship_type::red,0,0};
+	lunar_lockout_ship::spaceship green_ship={lunar_lockout_ship::spaceship_type::green,0,0};
+	lunar_lockout_ship::spaceship yellow_ship={lunar_lockout_ship::spaceship_type::yellow,0,0};
+	lunar_lockout_ship::spaceship orange_ship={lunar_lockout_ship::spaceship_type::orange,0,0};
+	lunar_lockout_ship::spaceship purple_ship={lunar_lockout_ship::spaceship_type::purple,0,0};
+	lunar_lockout_ship::spaceship blue_ship={lunar_lockout_ship::spaceship_type::blue,0,0};
+	switch(puzzle_number)
+	{
+		case 9:
+		red_ship={lunar_lockout_ship::spaceship_type::red,2,0};
+ 		green_ship={lunar_lockout_ship::spaceship_type::green,0,1};
+		yellow_ship={lunar_lockout_ship::spaceship_type::yellow,4,1};
+		orange_ship={lunar_lockout_ship::spaceship_type::orange,0,3};
+		purple_ship={lunar_lockout_ship::spaceship_type::purple,4,3};
+		blue_ship={lunar_lockout_ship::spaceship_type::blue,2,4};
+	
+	break;
 
-	lunar_lockout_ship::spaceship red_ship={lunar_lockout_ship::spaceship_type::red,2,0};
-	lunar_lockout_ship::spaceship green_ship={lunar_lockout_ship::spaceship_type::green,0,1};
-	lunar_lockout_ship::spaceship yellow_ship={lunar_lockout_ship::spaceship_type::yellow,4,1};
-	lunar_lockout_ship::spaceship orange_ship={lunar_lockout_ship::spaceship_type::orange,0,3};
-	lunar_lockout_ship::spaceship purple_ship={lunar_lockout_ship::spaceship_type::purple,4,3};
-	lunar_lockout_ship::spaceship blue_ship={lunar_lockout_ship::spaceship_type::blue,2,4};
+	default: std::cout<<"\nERROR! Invalid Puzzle!\n";
+}
 
 	spaceships.push_back(red_ship);
 	spaceships.push_back(green_ship);
@@ -114,10 +128,15 @@ void init_spaceship_statespace(std::vector<lunar_lockout_ship::spaceship>& space
 
 }
 void init_cell_statespace(lunar_lockout_cell::grid_type& grid,
-	std::vector<lunar_lockout_cell::direction>& possible_directions
+	std::vector<lunar_lockout_cell::direction>& possible_directions,
+	int puzzle_number
 	)
 {
 
+
+	switch(puzzle_number)
+	{
+		case 9:
 	unsigned int grid_world[lunar_lockout_cell::grid_x][lunar_lockout_cell::grid_y] = 
 	{
 		{0,0,2,0,0},
@@ -126,8 +145,9 @@ void init_cell_statespace(lunar_lockout_cell::grid_type& grid,
 		{5,0,0,0,4},
 		{0,0,7,0,0}	
 	};
-
 	copy_grid(grid_world,grid);
+	break;
+	}
 
 	possible_directions.push_back(lunar_lockout_cell::direction::up);
 	possible_directions.push_back(lunar_lockout_cell::direction::down);
@@ -137,14 +157,15 @@ void init_cell_statespace(lunar_lockout_cell::grid_type& grid,
 
 }
 
+//////////Planner Definition for the Spaceship Representation///////////////
 
-void init_planning_spaceship_statespace()
+void init_planning_spaceship_statespace(int puzzle_number)
 {
 	std::vector<lunar_lockout_ship::spaceship> spaceships;
 	std::vector<lunar_lockout_ship::spaceship_type> possible_ships;
 	std::vector<lunar_lockout_ship::direction> possible_directions;
 
-	init_spaceship_statespace(spaceships,possible_ships, possible_directions);
+	init_spaceship_statespace(spaceships,possible_ships, possible_directions,puzzle_number);
 	
 	std::stack<std::shared_ptr<lunar_lockout_ship::board_ship_state>> states;
 	std::vector<std::shared_ptr<lunar_lockout_ship::board_ship_state>> visited_states;
@@ -230,14 +251,14 @@ void init_planning_spaceship_statespace()
 
 //////////Planner Definition for the Cell World Representation///////////////
 
-void init_planning_cell_statespace()
+void init_planning_cell_statespace(int puzzle_number)
 {	
 	//Initialize the cell state space for search
 	lunar_lockout_cell::grid_type initial_grid;
 
 	std::vector<lunar_lockout_cell::direction> possible_directions;
 
-	init_cell_statespace(initial_grid, possible_directions);
+	init_cell_statespace(initial_grid, possible_directions,puzzle_number);
 	
 	//Initialize the stack for states that need to be visited next
 	std::stack<std::shared_ptr<lunar_lockout_cell::board_cell_state>> states;
