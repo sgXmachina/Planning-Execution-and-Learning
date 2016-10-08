@@ -15,14 +15,14 @@ void print_solution(const std::shared_ptr<T>& final_node)
 {
 	
 	if(final_node->get_parent()==NULL)
-	{return;}
+		{return;}
 	
 	print_solution<T>(final_node->get_parent());	
-		
+
 	final_node->print_move();
 	final_node->print_grid();
 	std::cout<<"\n";
-		
+
 	
 
 }
@@ -85,35 +85,75 @@ void init_spaceship_statespace(std::vector<lunar_lockout_ship::spaceship>& space
 	lunar_lockout_ship::spaceship orange_ship={lunar_lockout_ship::spaceship_type::orange,0,0};
 	lunar_lockout_ship::spaceship purple_ship={lunar_lockout_ship::spaceship_type::purple,0,0};
 	lunar_lockout_ship::spaceship blue_ship={lunar_lockout_ship::spaceship_type::blue,0,0};
-	switch(puzzle_number)
-	{
-		case 9:
-		red_ship={lunar_lockout_ship::spaceship_type::red,2,0};
- 		green_ship={lunar_lockout_ship::spaceship_type::green,0,1};
-		yellow_ship={lunar_lockout_ship::spaceship_type::yellow,4,1};
-		orange_ship={lunar_lockout_ship::spaceship_type::orange,0,3};
-		purple_ship={lunar_lockout_ship::spaceship_type::purple,4,3};
-		blue_ship={lunar_lockout_ship::spaceship_type::blue,2,4};
-	
-	break;
 
-	default: std::cout<<"\nERROR! Invalid Puzzle!\n";
-}
-
-	spaceships.push_back(red_ship);
-	spaceships.push_back(green_ship);
-	spaceships.push_back(yellow_ship);
-	spaceships.push_back(purple_ship);
-	spaceships.push_back(orange_ship);
-	spaceships.push_back(blue_ship);
-
-	
 	possible_ships.push_back(lunar_lockout_ship::spaceship_type::red);
 	possible_ships.push_back(lunar_lockout_ship::spaceship_type::green);
-	possible_ships.push_back(lunar_lockout_ship::spaceship_type::yellow);
 	possible_ships.push_back(lunar_lockout_ship::spaceship_type::purple);
 	possible_ships.push_back(lunar_lockout_ship::spaceship_type::orange);
-	possible_ships.push_back(lunar_lockout_ship::spaceship_type::blue);
+
+	switch(puzzle_number)
+	{
+		case 1:
+		red_ship={lunar_lockout_ship::spaceship_type::red,2,0};
+		green_ship={lunar_lockout_ship::spaceship_type::green,2,2};
+		yellow_ship={lunar_lockout_ship::spaceship_type::yellow,3,4};
+		orange_ship={lunar_lockout_ship::spaceship_type::orange,4,0};
+		purple_ship={lunar_lockout_ship::spaceship_type::purple,1,3};
+
+		spaceships.push_back(red_ship);
+		spaceships.push_back(green_ship);
+		spaceships.push_back(yellow_ship);
+		spaceships.push_back(purple_ship);
+		spaceships.push_back(orange_ship);
+		possible_ships.push_back(lunar_lockout_ship::spaceship_type::yellow);
+
+		break;
+		case 2:
+		red_ship={lunar_lockout_ship::spaceship_type::red,2,0};
+		green_ship={lunar_lockout_ship::spaceship_type::green,2,4};
+		orange_ship={lunar_lockout_ship::spaceship_type::orange,0,4};
+		purple_ship={lunar_lockout_ship::spaceship_type::purple,4,4};
+		spaceships.push_back(red_ship);
+		spaceships.push_back(green_ship);
+		spaceships.push_back(purple_ship);
+		spaceships.push_back(orange_ship);
+		break;
+		case 3:
+		red_ship={lunar_lockout_ship::spaceship_type::red,4,4};
+		green_ship={lunar_lockout_ship::spaceship_type::green,4,0};
+		yellow_ship={lunar_lockout_ship::spaceship_type::yellow,3,2};
+		orange_ship={lunar_lockout_ship::spaceship_type::orange,1,0};
+		purple_ship={lunar_lockout_ship::spaceship_type::purple,0,2};
+		blue_ship={lunar_lockout_ship::spaceship_type::blue,0,4};
+		spaceships.push_back(red_ship);
+		spaceships.push_back(green_ship);
+		spaceships.push_back(yellow_ship);
+		spaceships.push_back(purple_ship);
+		spaceships.push_back(orange_ship);
+		spaceships.push_back(blue_ship);
+		possible_ships.push_back(lunar_lockout_ship::spaceship_type::blue);
+		possible_ships.push_back(lunar_lockout_ship::spaceship_type::yellow);
+			break;
+		case 4:
+		red_ship={lunar_lockout_ship::spaceship_type::red,2,0};
+		green_ship={lunar_lockout_ship::spaceship_type::green,4,1};
+		yellow_ship={lunar_lockout_ship::spaceship_type::yellow,4,3};
+		orange_ship={lunar_lockout_ship::spaceship_type::orange,0,1};
+		purple_ship={lunar_lockout_ship::spaceship_type::purple,0,3};
+		blue_ship={lunar_lockout_ship::spaceship_type::blue,2,4};
+		spaceships.push_back(red_ship);
+		spaceships.push_back(green_ship);
+		spaceships.push_back(yellow_ship);
+		spaceships.push_back(purple_ship);
+		spaceships.push_back(orange_ship);
+		spaceships.push_back(blue_ship);
+		possible_ships.push_back(lunar_lockout_ship::spaceship_type::blue);
+		possible_ships.push_back(lunar_lockout_ship::spaceship_type::yellow);
+		break;
+
+		default: std::cout<<"\nERROR! Invalid Puzzle!\n";
+	}
+
 
 
 
@@ -136,17 +176,59 @@ void init_cell_statespace(lunar_lockout_cell::grid_type& grid,
 
 	switch(puzzle_number)
 	{
-		case 9:
-	unsigned int grid_world[lunar_lockout_cell::grid_x][lunar_lockout_cell::grid_y] = 
-	{
-		{0,0,2,0,0},
-		{6,0,0,0,3},
-		{0,0,0,0,0},
-		{5,0,0,0,4},
-		{0,0,7,0,0}	
-	};
-	copy_grid(grid_world,grid);
-	break;
+		case 1:
+		{
+			unsigned int grid_world[lunar_lockout_cell::grid_x][lunar_lockout_cell::grid_y] = 
+			{
+				{0,0,2,0,6},
+				{0,0,0,0,0},
+				{0,0,3,0,0},
+				{0,5,0,0,0},
+				{0,0,0,4,0}	
+			};
+			copy_grid(grid_world,grid);
+		}
+
+		break;
+		case 2:
+		{
+			unsigned int grid_world[lunar_lockout_cell::grid_x][lunar_lockout_cell::grid_y] = 
+			{
+				{0,0,2,0,0},
+				{0,0,0,0,0},
+				{0,0,0,0,0},
+				{0,0,0,0,0},
+				{6,0,3,0,5}	
+			};
+			copy_grid(grid_world,grid);
+		}
+		break;
+		case 3:
+		{
+			unsigned int grid_world[lunar_lockout_cell::grid_x][lunar_lockout_cell::grid_y] = 
+			{
+				{0,6,0,0,3},
+				{0,0,0,0,0},
+				{5,0,0,4,0},
+				{0,0,0,0,0},
+				{7,0,0,0,2}	
+			};
+			copy_grid(grid_world,grid);
+		}
+		break;
+		case 4:
+		{
+			unsigned int grid_world[lunar_lockout_cell::grid_x][lunar_lockout_cell::grid_y] = 
+			{
+				{0,0,2,0,0},
+				{6,0,0,0,3},
+				{0,0,0,0,0},
+				{5,0,0,0,4},
+				{0,0,7,0,0}	
+			};
+			copy_grid(grid_world,grid);
+		}
+		break;
 	}
 
 	possible_directions.push_back(lunar_lockout_cell::direction::up);
@@ -161,6 +243,8 @@ void init_cell_statespace(lunar_lockout_cell::grid_type& grid,
 
 void init_planning_spaceship_statespace(int puzzle_number)
 {
+
+	int states_expanded = 0;
 	std::vector<lunar_lockout_ship::spaceship> spaceships;
 	std::vector<lunar_lockout_ship::spaceship_type> possible_ships;
 	std::vector<lunar_lockout_ship::direction> possible_directions;
@@ -188,6 +272,8 @@ void init_planning_spaceship_statespace(int puzzle_number)
 
 		if (current_state_ptr->get_valid() && !final_state)
 		{
+			//increase the number of states expanded
+			++states_expanded;			
 			for (const auto& ship:possible_ships)
 			{
 				if(!final_state)
@@ -239,6 +325,7 @@ void init_planning_spaceship_statespace(int puzzle_number)
 	{
 		std::cout<<"Solution is found\n";
 		print_solution<lunar_lockout_ship::board_ship_state>(final_state);
+		std::cout<<"\n--States Expanded = "<<states_expanded<<std::endl;
 	}
 
 	else
@@ -253,6 +340,9 @@ void init_planning_spaceship_statespace(int puzzle_number)
 
 void init_planning_cell_statespace(int puzzle_number)
 {	
+	//States Expanded
+	int states_expanded=0;
+
 	//Initialize the cell state space for search
 	lunar_lockout_cell::grid_type initial_grid;
 
@@ -283,8 +373,12 @@ void init_planning_cell_statespace(int puzzle_number)
 		visited_states.push_back(current_state_ptr);
 		states.pop();
 
+
 		if (current_state_ptr->get_valid() && !final_state)
 		{
+			//increase the number of states expanded
+			++states_expanded;
+
 			for( size_t x=0;x<lunar_lockout_cell::grid_x;++x)
 			{
 				for( size_t y=0;y<lunar_lockout_cell::grid_y;++y)
@@ -341,6 +435,7 @@ void init_planning_cell_statespace(int puzzle_number)
 	{
 		std::cout<<"\nSolution is found\n";
 		print_solution<lunar_lockout_cell::board_cell_state>(final_state);
+		std::cout<<"\n--States Expanded = "<<states_expanded<<std::endl;
 	}
 
 	else

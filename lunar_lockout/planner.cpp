@@ -26,7 +26,7 @@ int main(int argc,char* argv[0])
 
 	else
 	{	
-		if (strlen(argv[2])!=1)	
+		if (strlen(argv[2])>2)	
 		{
 			std::cout<<"Invalid Puzzle Number\n";
 		}
