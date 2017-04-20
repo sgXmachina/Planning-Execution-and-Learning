@@ -1,0 +1,2 @@
+/usr/bin/ar cr libstate_representation.a  CMakeFiles/state_representation.dir/state_cell.cpp.o CMakeFiles/state_representation.dir/state_ship.cpp.o
+/usr/bin/ranlib libstate_representation.a

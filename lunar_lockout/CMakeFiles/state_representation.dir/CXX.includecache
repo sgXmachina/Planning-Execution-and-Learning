@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shivam/2016-17/PEL/HW1/lunar_lockout/state_cell.cpp
+state_cell.h
+/home/shivam/2016-17/PEL/HW1/lunar_lockout/state_cell.h
+iostream
+-
+
+/home/shivam/2016-17/PEL/HW1/lunar_lockout/state_cell.h
+vector
+-
+array
+-
+memory
+-
+algorithm
+-
+iostream
+-
+

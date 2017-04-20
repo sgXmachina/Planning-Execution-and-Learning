@@ -1,0 +1,14 @@
+To Run the code (run_q_learning.cpp)
+
+./a.out
+
+
+To Change the Code (call for specific q value)
+
+Change in file run_q_learning.cpp
+query_q_func
+
+
+To Build Code
+
+g++ run_q_learning.cpp include/q_learner.h src/q_learner.cpp include/mdp-simulation.h libmdp-simulation.a include/types.h -lboost_system -lconfig++ -std=c++11

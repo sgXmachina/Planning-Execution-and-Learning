@@ -1,0 +1,16 @@
+Runs the lunar lockout puzzle for two domain representations-
+ 1. Cell based representation - Captures the state of each x,y in the puzzle.
+ 2. Ship based representation - Captures the state of each spaceship in the puzzle.
+
+Compiliation
+ - cmake .
+ - make
+
+Execution
+
+./lunar_lockout_runnner <domain_name> <puzzle_number>
+
+Domain name can be = domain1 (Cell representation) or domain2 (ship representation)
+Puzzle number can from 1,2,3,4.
+
+More details about the puzzle can be found in HW1.pdf.
